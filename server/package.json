@@ -1,0 +1,14 @@
+{
+  "name": "eperai-web-studio-bridge",
+  "version": "1.0.0",
+  "description": "Local bridge API between EperAI web app and Roblox Studio plugin",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.3"
+  },
+  "license": "MIT"
+}

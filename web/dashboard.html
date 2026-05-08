@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EperAI Dashboard</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Arial,sans-serif}
+    body{background:#2d2d2f;color:white;min-height:100vh}
+    .shell{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+    .sidebar{background:#29292b;border-right:1px solid rgba(255,255,255,.08);padding:16px;display:flex;flex-direction:column}
+    .brand{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:1000;margin-bottom:18px}.logo{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#ff4f8a,#ffb15a)}
+    .new{border:none;background:white;color:#222;padding:13px;border-radius:12px;font-weight:900;margin-bottom:22px}.muted{color:#999;font-size:13px;margin:14px 0 10px}.archive{color:#aaa;padding:10px 4px}.discord{margin-top:auto;background:#555c68;border-radius:12px;padding:15px}
+    .main{display:flex;flex-direction:column}.top{height:56px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;padding:0 18px;gap:10px}.status{font-weight:900;color:#bbb}.status.ok{color:#22c55e}.store{background:#22c55e;color:white;border:none;border-radius:12px;padding:11px 18px;font-weight:900}.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#1f304e;font-size:11px;font-weight:900}
+    .center{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:50px 18px}h1{font-size:46px;font-weight:500;letter-spacing:-2px;text-align:center;margin-bottom:22px}h1 i{font-family:Georgia,serif}
+    .input{width:min(760px,100%);background:#4b4b4d;border-radius:26px;padding:13px;display:flex;gap:12px;box-shadow:0 28px 70px rgba(0,0,0,.28)}
+    textarea{flex:1;min-height:74px;border:none;outline:none;resize:none;background:transparent;color:white;font-size:17px;padding:12px}.input button{width:48px;height:48px;align-self:flex-end;border:none;border-radius:14px;background:#cfd3da;color:#222;font-weight:1000;cursor:pointer}
+    .chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}.chips button{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:white;border-radius:999px;padding:10px 14px;font-weight:800;cursor:pointer}
+    .output{width:min(860px,100%);margin-top:28px;background:#1f1f22;border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px}.output-head{display:flex;justify-content:space-between;margin-bottom:10px}.output-head span{color:#aeb4c8}
+    pre{white-space:pre-wrap;background:#10141d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px;min-height:180px;color:#e5ebff;line-height:1.6}
+    .send-status{margin-top:14px;color:#bbb;text-align:center;min-height:24px}.send-status.good{color:#22c55e}.send-status.bad{color:#ff6b6b}
+    @media(max-width:850px){.shell{grid-template-columns:1fr}.sidebar{border-right:none;border-bottom:1px solid rgba(255,255,255,.08)}h1{font-size:34px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="logo">🍓</span><span>EperAI</span></div>
+      <button class="new">＋ Új projekt</button>
+      <div class="muted">PROJEKTEK</div>
+      <div class="muted">ARCHIVÁLT</div>
+      <div class="archive">🗑 a</div>
+      <div class="archive">🗑 Kris</div>
+      <div class="discord"><b>Discord</b><br><small>Join for gifts →</small></div>
+    </aside>
+
+    <section class="main">
+      <div class="top">
+        <div id="serverStatus" class="status">Server: checking...</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button class="store">Store Purchases</button>
+          <div class="avatar">K3D</div>
+        </div>
+      </div>
+
+      <section class="center">
+        <h1>Írj le egy <i>játék mechanikát...</i></h1>
+
+        <div class="input">
+          <textarea id="prompt" placeholder="Példa: csinálj leaderstats scriptet Coins értékkel"></textarea>
+          <button id="send">↗</button>
+        </div>
+
+        <div class="chips">
+          <button data-fill="Készíts leaderstats scriptet Coins értékkel">Leaderstats</button>
+          <button data-fill="Készíts egy touch part reward scriptet ami ad 100 Coins-t">Touch reward</button>
+          <button data-fill="Készíts egy RemoteEvent setupot UpdateCurrency névvel">RemoteEvent</button>
+          <button data-fill="Készíts egy teleport part scriptet">Teleport</button>
+          <button data-fill="Készíts egy harcrendszert">Harcrendszer</button>
+        </div>
+
+        <div class="send-status" id="sendStatus"></div>
+
+        <div class="output">
+          <div class="output-head">
+            <b>Preview / Plugin queue</b>
+            <span>Web → API → Studio Plugin</span>
+          </div>
+          <pre id="code">Írd be a promptot, majd küldd át a Studio pluginnak.</pre>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const API_BASE = "http://localhost:3000";
+    const promptEl = document.getElementById("prompt");
+    const codeEl = document.getElementById("code");
+    const sendStatus = document.getElementById("sendStatus");
+    const serverStatus = document.getElementById("serverStatus");
+
+    document.querySelectorAll("[data-fill]").forEach(btn => {
+      btn.onclick = () => {
+        promptEl.value = btn.dataset.fill;
+        queuePrompt();
+      };
+    });
+
+    async function checkServer() {
+      try {
+        const res = await fetch(API_BASE + "/");
+        const data = await res.json();
+        serverStatus.textContent = "Server: online";
+        serverStatus.classList.add("ok");
+      } catch (err) {
+        serverStatus.textContent = "Server: offline";
+        serverStatus.classList.remove("ok");
+      }
+    }
+
+    async function queuePrompt() {
+      const prompt = promptEl.value.trim();
+
+      if (!prompt) {
+        sendStatus.textContent = "Írj be egy promptot.";
+        sendStatus.className = "send-status bad";
+        return;
+      }
+
+      sendStatus.textContent = "Küldés a local API-nak...";
+      sendStatus.className = "send-status";
+
+      try {
+        const res = await fetch(API_BASE + "/queue", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt })
+        });
+
+        const data = await res.json();
+
+        if (!data.ok) throw new Error(data.error || "Unknown error");
+
+        codeEl.textContent =
+`Queued action ID: ${data.command.id}
+
+Path:
+${data.command.path}
+
+Generated code:
+${data.command.code}
+
+Most nyisd meg Roblox Studio-ban az EperAI plugint, majd kattints: Apply Web Command.`;
+
+        sendStatus.textContent = "Elküldve. A Studio plugin már le tudja kérni.";
+        sendStatus.className = "send-status good";
+      } catch (err) {
+        sendStatus.textContent = "Nem megy az API. Indítsd el: cd server && npm start";
+        sendStatus.className = "send-status bad";
+      }
+    }
+
+    document.getElementById("send").onclick = queuePrompt;
+
+    checkServer();
+    setInterval(checkServer, 5000);
+  </script>
+</body>
+</html>

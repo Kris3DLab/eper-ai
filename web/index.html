@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EperAI - Magyar Roblox Coding Tool</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Arial,sans-serif}
+    :root{--bg:#1b2c5a;--bg2:#121a35;--text:#fff;--muted:#b8c0d9;--line:rgba(255,255,255,.12);--purple:#9d94ff;--green:#22c55e;--black:#111216}
+    html{scroll-behavior:smooth}
+    body{min-height:100vh;color:var(--text);background:radial-gradient(circle at 72% 15%,rgba(122,95,255,.24),transparent 34%),radial-gradient(circle at 55% 48%,rgba(255,91,201,.10),transparent 28%),linear-gradient(180deg,#26396c 0%,#1b2c5a 38%,#121a35 100%);overflow-x:hidden}
+    .page{width:min(1420px,calc(100% - 36px));margin:0 auto;padding-bottom:90px;position:relative}
+    .navbar{height:78px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .brand{display:flex;align-items:center;gap:12px;color:white;text-decoration:none;font-weight:1000}
+    .brand-icon{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ff4f8a,#ffb15a);box-shadow:0 14px 34px rgba(0,0,0,.28)}
+    .brand-name{font-size:26px;letter-spacing:-1px}.beta{font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);color:#ddd}
+    .navlinks{display:flex;align-items:center;gap:30px}.navlinks a,.login{color:white;text-decoration:none;font-weight:900}
+    .login{padding:12px 22px;border-radius:14px;background:rgba(0,0,0,.24);border:1px solid var(--line);box-shadow:0 12px 36px rgba(0,0,0,.22)}
+    .hero{min-height:720px;display:grid;grid-template-columns:1fr 1.08fr;gap:72px;align-items:center}
+    .hero-left h1{font-size:clamp(54px,7vw,86px);line-height:.93;letter-spacing:-4px;margin-bottom:24px;max-width:690px}.hero-left h1 span{color:var(--purple)}
+    .hero-left p{color:var(--muted);font-size:18px;line-height:1.75;max-width:620px}.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px}
+    .primary,.secondary{display:inline-flex;align-items:center;justify-content:center;padding:15px 22px;border-radius:14px;text-decoration:none;font-weight:1000}
+    .primary{background:#111;color:white}.secondary{border:1px solid var(--line);color:white;background:rgba(255,255,255,.05)}
+    .hero-right{display:flex;flex-direction:column;align-items:center;gap:22px;position:relative}.demo-wrap{position:relative;width:min(650px,100%);min-height:430px;display:grid;place-items:center}
+    .back-card{position:absolute;width:86%;height:78%;border-radius:28px;background:rgba(76,88,130,.45);border:1px solid rgba(255,255,255,.10);box-shadow:0 30px 80px rgba(0,0,0,.25)}
+    .back-card.one{transform:translateX(-48px) rotate(-7deg)}.back-card.two{transform:translateX(48px) rotate(7deg)}
+    .demo-window{position:relative;z-index:2;width:min(570px,100%);border:10px solid #171923;border-radius:26px;overflow:hidden;background:#243050;box-shadow:0 40px 90px rgba(0,0,0,.38)}
+    .demo-top{height:50px;background:linear-gradient(90deg,#24c7ff,#f34ac6);display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-weight:1000}
+    .demo-close{width:30px;height:30px;border-radius:7px;background:#ff2b86;display:grid;place-items:center;border:2px solid rgba(0,0,0,.28)}
+    .shop-body{background:#94bad3;padding:16px}.cash-title{color:#252b33;text-align:center;font-weight:1000;margin-bottom:10px}.shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+    .shop-item{min-height:92px;border-radius:12px;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.45),transparent 24%),linear-gradient(135deg,#c7ef3c,#7bd315);border:3px solid rgba(0,0,0,.22);box-shadow:inset 0 0 0 3px rgba(255,255,255,.18);color:#182405;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:1000;gap:9px}
+    .shop-item span{display:inline-flex;padding:5px 14px;border-radius:999px;background:#22a8ff;color:white;font-size:13px}
+    .caption{width:80%;margin:-5px auto 18px;background:#1f1f23;border-radius:15px;padding:16px;line-height:1.5;color:#f2f3fa;box-shadow:0 14px 34px rgba(0,0,0,.28)}
+    .tabs{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}.tabs button{border:none;background:transparent;color:#dbe2f7;font-weight:900;padding:12px 0;border-bottom:3px solid transparent;cursor:pointer}.tabs button.active{color:white;border-color:white}
+    .love{display:flex;justify-content:center;margin:20px 0 32px}.love span{background:white;color:#222;padding:10px 16px;border-radius:999px;font-weight:900}
+    .headline h2{text-align:center;font-size:clamp(42px,6vw,66px);font-weight:500;letter-spacing:-2px;margin-bottom:30px}
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:70px}.card{background:rgba(13,18,34,.62);border:1px solid var(--line);border-radius:22px;padding:24px}.card b{display:block;font-size:20px;margin-bottom:10px}.card p{color:var(--muted);line-height:1.65}
+    .faq h3{font-size:34px;margin-bottom:18px}
+    @media(max-width:1100px){.hero{grid-template-columns:1fr;gap:36px;padding:40px 0 70px}.navlinks{display:none}.cards{grid-template-columns:1fr}}
+    @media(max-width:650px){.page{width:min(100% - 20px,1420px)}.hero-left h1{font-size:44px;letter-spacing:-2px}.shop-grid{grid-template-columns:repeat(2,1fr)}.caption{width:calc(100% - 22px)}.back-card{display:none}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="navbar">
+      <a class="brand" href="index.html">
+        <span class="brand-icon">🍓</span>
+        <span class="brand-name">EperAI</span>
+        <span class="beta">beta</span>
+      </a>
+      <nav class="navlinks">
+        <a href="#features">Funkciók</a>
+        <a href="#faq">GYIK</a>
+        <a href="dashboard.html">Start Prototyping</a>
+      </nav>
+      <a class="login" href="signin.html">Belépés</a>
+    </header>
+
+    <section class="hero">
+      <div class="hero-left">
+        <h1>Az első <span>AI kódoló tool</span> Robloxhoz</h1>
+        <p>Készíts Roblox mechanikákat magyarul: shop UI, attack system, round system, farming system, log elemzés és Studio plugin kapcsolat.</p>
+        <div class="hero-actions">
+          <a class="primary" href="dashboard.html">Start Prototyping</a>
+          <a class="secondary" href="#demo">Demo megnyitása →</a>
+        </div>
+      </div>
+
+      <div class="hero-right" id="demo">
+        <div class="demo-wrap">
+          <div class="back-card one"></div>
+          <div class="back-card two"></div>
+          <div class="demo-window">
+            <div class="demo-top"><div>Shop</div><div class="demo-close">×</div></div>
+            <div class="shop-body">
+              <div class="cash-title">Cash</div>
+              <div class="shop-grid">
+                <div class="shop-item"><b>+5000</b><span>499</span></div>
+                <div class="shop-item"><b>+5000</b><span>499</span></div>
+                <div class="shop-item"><b>+5000</b><span>499</span></div>
+                <div class="shop-item"><b>+10,000</b><span>499</span></div>
+                <div class="shop-item"><b>+10,000</b><span>499</span></div>
+                <div class="shop-item"><b>+10,000</b><span>499</span></div>
+              </div>
+            </div>
+            <div class="caption">Készíts shop UI-t 5 itemmel, és használd a GamePass-t vásárláshoz.</div>
+          </div>
+        </div>
+        <div class="tabs">
+          <button class="active">Shop UI</button><button>Attack System</button><button>Building System</button><button>Farming System</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="love"><span>🤍 A mi Wall of Love-unk</span></section>
+    <section class="headline"><h2>Ne csak nekünk higgy</h2></section>
+
+    <section class="cards" id="features">
+      <article class="card"><b>Magyar promptok</b><p>Írhatsz úgy, ahogy Discordon is írnád: “csinálj coin rendszert”.</p></article>
+      <article class="card"><b>Web → Studio kapcsolat</b><p>A weben megadott promptból action lesz, amit a Studio plugin végrehajt.</p></article>
+      <article class="card"><b>Script generátor</b><p>Leaderstats, touch reward, RemoteEvent, teleport és további templatek.</p></article>
+    </section>
+
+    <section class="faq" id="faq">
+      <h3>GYIK</h3>
+      <div class="cards">
+        <article class="card"><b>Hogy kapcsolódik a Studio-hoz?</b><p>A web elküldi a promptot a local API-nak, a plugin pedig lekéri a várakozó scriptet.</p></article>
+        <article class="card"><b>Kell hozzá local szerver?</b><p>Igen, a server mappában futó Node.js bridge köti össze a webet és Studio-t.</p></article>
+        <article class="card"><b>Biztonságos?</b><p>A plugin csak új scriptet hoz létre ServerScriptService-ben, nem töröl és nem ír át meglévő fájlokat.</p></article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
